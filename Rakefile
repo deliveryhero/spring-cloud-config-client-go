@@ -1,7 +1,19 @@
 task :command_exists, [:command] do |_, args|
     abort "#{args.command} doesn't exists" if `command -v #{args.command} > /dev/null 2>&1 && echo $?`.chomp.empty?
 end
-  
+
+task :is_repo_clean do
+  abort 'please commit your changes first!' unless `git status -s | wc -l`.strip.to_i.zero?
+end
+
+task :current_branch do
+  `git rev-parse --abbrev-ref HEAD`.strip
+end
+
+task :has_bumpversion do
+  Rake::Task['command_exists'].invoke('bumpversion')
+end
+
 task :has_hadolint do
     Rake::Task['command_exists'].invoke('hadolint')
 end
@@ -30,6 +42,38 @@ namespace :pre_commit do
     end
 end
 
+desc "publish new version of the library, default is: patch"
+task :publish, [:revision] => [:is_repo_clean] do |t, args|
+  current_branch = Rake::Task["current_branch"].invoke.first.call
+
+  abort "this command works for [main] or [master] branches only, not for [#{current_branch}] branch" unless ['master', 'main'].include?(current_branch)
+
+  args.with_defaults(revision: "patch")
+
+  Rake::Task["bump"].invoke(args.revision)
+  current_git_tag = "v#{current_version}"
+
+  puts "[->] new version is \e[33m#{current_git_tag}\e[0m"
+  puts "[->] pushing \e[33m#{current_git_tag}\e[0m to remote"
+  system %{
+    git push origin #{current_git_tag} &&
+    go list -m github.com:deliveryhero/sc-honeylogger@#{current_git_tag} &&
+    echo "[->] [#{current_git_tag}] has been published" &&
+    git push origin #{current_branch} &&
+    echo "[->] code pushed to: [#{current_branch}] branch (updated)"
+  }
+end
+
+AVAILABLE_REVISIONS = %w[major minor patch].freeze
+desc "bump version, default is: patch"
+task :bump, [:revision] => [:has_bumpversion] do |_, args|
+  args.with_defaults(revision: 'patch')
+  unless AVAILABLE_REVISIONS.include?(args.revision)
+    abort "Please provide valid revision: #{AVAILABLE_REVISIONS.join(',')}"
+  end
+
+  system "bumpversion #{args.revision}"
+end
 
 desc "run tests"
 task :test => [:has_gsed] do
