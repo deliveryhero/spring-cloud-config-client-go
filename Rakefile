@@ -42,6 +42,14 @@ namespace :pre_commit do
     end
 end
 
+def current_version(lookup_file=".bumpversion.cfg")
+  file = File.open(lookup_file, "r")
+  data = file.read
+  file.close
+  match = /current_version = (\d+).(\d+).(\d+)/.match(data)
+  "#{match[1]}.#{match[2]}.#{match[3]}"
+end
+
 desc "publish new version of the library, default is: patch"
 task :publish, [:revision] => [:is_repo_clean] do |t, args|
   current_branch = Rake::Task["current_branch"].invoke.first.call
