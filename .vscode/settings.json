@@ -1,0 +1,7 @@
+{
+    "go.formatTool": "gofumpt",
+    "go.lintTool": "golangci-lint",
+    "editor.tabSize": 4,
+    "editor.rulers": [80, 120],
+    "editor.formatOnSave": true,
+}
