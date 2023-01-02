@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/version-1.0.1-orange.svg)
+![Version](https://img.shields.io/badge/version-1.0.5-orange.svg)
 [![GolangCI Lint](https://github.com/deliveryhero/spring-cloud-config-client-go/actions/workflows/go-lint.yml/badge.svg)](https://github.com/deliveryhero/sc-payment-service/actions/workflows/go-lint.yml)
 [![Golang Tests](https://github.com/deliveryhero/spring-cloud-config-client-go/actions/workflows/go-test.yml/badge.svg)](https://github.com/deliveryhero/sc-payment-service/actions/workflows/go-test.yml) 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit) 
