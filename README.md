@@ -36,33 +36,7 @@ func main() {
 
 ## Installation
 
-This is a private repo, you need to fix your git/ssh or token operations before
-injecting to you go app.
-
-If you are using `git+ssh`, I’m assuming that you have already authorized your
-ssh-key key on [GitHub](https://github.com/settings/tokens) side under
-**Personal access tokens** page via **Configure SSO** combo-box.
-
-Fix your git configuration, run this:
-
-```bash
-git config --global --add url."git@github.com:".insteadOf "https://github.com/"
-```
-
-command above adds few lines to your `~/.gitconfig`:
-
-```ini
-[url "git@github.com:"]
-	insteadOf = https://github.com/
-```
-
-Now, add `GOPRIVATE` environment value to your shell environment.
-
-```bash
-export GOPRIVATE="github.com/deliveryhero"
-```
-
-Now you can add this package via;
+You can add this package via;
 
 ```bash
 go get github.com/deliveryhero/spring-cloud-config-client-go
@@ -106,14 +80,14 @@ tag and updated code to remote and verify go package. (all in one!)
 
 All PR’s are welcome!
 
-1. `fork` (https://github.com/deliveryhero/sc-honeylogger/fork)
-1. Create your `branch` (`git checkout -b my-feature`)
-1. `commit` yours (`git commit -am 'add some functionality'`)
-1. `push` your `branch` (`git push origin my-feature`)
-1. Than create a new **Pull Request**!
+1. `fork` (https://github.com/deliveryhero/spring-cloud-config-client-go/fork)
+2. Create your `branch` (`git checkout -b my-feature`)
+3. `commit` yours (`git commit -am 'add some functionality'`)
+4. `push` your `branch` (`git push origin my-feature`)
+5. Than create a new **Pull Request**!
 
 This project is intended to be a safe, welcoming space for collaboration, and
 contributors are expected to adhere to the [code of conduct][coc].
 
 
-[coc]: https://github.com/deliveryhero/sc-honeylogger/blob/main/CODE_OF_CONDUCT.md
+[coc]: https://github.com/deliveryhero/spring-cloud-config-client-go/blob/main/CODE_OF_CONDUCT.md
