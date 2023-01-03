@@ -3,6 +3,7 @@ package springconfigclient
 import (
 	"context"
 	"os"
+	"sync"
 
 	springconfighttpclient "github.com/deliveryhero/spring-cloud-config-client-go/springconfighttpclient"
 	resolver "github.com/deliveryhero/spring-cloud-config-client-go/springconfigresolver"
@@ -17,6 +18,7 @@ type RemoteConfig struct {
 }
 
 type remoteConfigStorer struct {
+	mu           sync.Mutex
 	values       map[string]string
 	remoteConfig *RemoteConfig
 	Service      string
@@ -37,6 +39,8 @@ func New(service string, environment string, remoteConfig *RemoteConfig) RemoteC
 }
 
 func (c *remoteConfigStorer) Sync() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	client := springconfighttpclient.New(
 		springconfighttpclient.WithURL(c.remoteConfig.Url),
 		springconfighttpclient.WithUsername(c.remoteConfig.Username),
