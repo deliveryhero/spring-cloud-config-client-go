@@ -14,7 +14,7 @@ type Resolver interface {
 	Resolve(value string) string
 }
 
-var _ Resolver = (*resolver)(nil) // compil
+var _ Resolver = (*resolver)(nil) // compile time proof
 
 func New() Resolver {
 	matcher := regexp.MustCompile(`\{(.*?)\}`)
