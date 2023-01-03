@@ -42,7 +42,6 @@ func New(service string, environment string, remoteConfig *RemoteConfig, logger 
 func (c *remoteConfigStorer) Sync() error {
 	client := springconfighttpclient.New(
 		springconfighttpclient.WithURL(c.remoteConfig.Url),
-		springconfighttpclient.WithRetry3(c.logger),
 		springconfighttpclient.WithUsername(c.remoteConfig.Username),
 		springconfighttpclient.WithPassword(c.remoteConfig.Password))
 	config, err := client.Get(context.Background(), c.Service, c.Environment)

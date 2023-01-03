@@ -65,7 +65,6 @@ func (s *ClientTestSuite) TestClient_Success() {
 
 	client := configserverclient.New(
 		configserverclient.WithURL(testServer.URL),
-		configserverclient.WithRetry3(nil),
 		configserverclient.WithUsername(username),
 		configserverclient.WithPassword(password))
 	_, err := client.Get(context.Background(), service, environment)

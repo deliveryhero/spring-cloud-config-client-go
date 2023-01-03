@@ -9,9 +9,7 @@ import (
 	"net/url"
 
 	"github.com/deliveryhero/spring-cloud-config-client-go/src/logging"
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/pkg/errors"
-	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 var _ Client = (*client)(nil) // compile time proof
@@ -63,30 +61,10 @@ func WithURL(url string) func(*client) {
 	}
 }
 
-func withRetry(retry int, logger logging.Logger) func(*client) {
+func WithClient(httpClient *http.Client) func(*client) {
 	return func(s *client) {
-		rclient := retryablehttp.NewClient()
-		rclient.RetryMax = retry
-		rclient.Logger = logger
-
-		s.logger = logger
-		s.client = httptrace.WrapClient(rclient.StandardClient())
+		s.client = httpClient
 	}
-}
-
-// WithRetry3 sets the retry count 3 for the client and logger. Minimum 1 retry option required.
-func WithRetry3(logger logging.Logger) func(*client) {
-	return withRetry(3, logger)
-}
-
-// WithRetry5 sets the retry count 5 for the client and logger. Minimum 1 retry option required.
-func WithRetry5(logger logging.Logger) func(*client) {
-	return withRetry(5, logger)
-}
-
-// WithRetry10 sets the retry count 10 for the client and logger. Minimum 1 retry option required.
-func WithRetry10(logger logging.Logger) func(*client) {
-	return withRetry(10, logger)
 }
 
 // Get implements create payment checkout api client functionality.
@@ -95,6 +73,10 @@ func (c *client) Get(
 	application string,
 	environment string,
 ) (map[string]any, error) {
+	if c.client == nil {
+		c.client = http.DefaultClient
+	}
+
 	url, err := url.Parse(c.url + "/" + application + "/" + environment)
 	if err != nil {
 		if c.logger != nil {
