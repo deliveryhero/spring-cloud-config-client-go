@@ -6,22 +6,26 @@ import (
 	"strings"
 )
 
-type resolver struct{}
+type resolver struct {
+	matcher *regexp.Regexp
+}
 
 type Resolver interface {
 	Resolve(value string) string
 }
 
-var _ Resolver = (*resolver)(nil) // compil
+var _ Resolver = (*resolver)(nil) // compile time proof
 
 func New() Resolver {
-	return &resolver{}
+	matcher := regexp.MustCompile(`\{(.*?)\}`)
+	return &resolver{
+		matcher: matcher,
+	}
 }
 
 func (r *resolver) Resolve(str string) string {
 	if len(str) > 0 && str[0] == '$' {
-		matcher := regexp.MustCompile(`\{(.*?)\}`)
-		result := matcher.FindStringSubmatch(str)
+		result := r.matcher.FindStringSubmatch(str)
 		if len(result) == 0 {
 			return str
 		}
