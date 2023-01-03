@@ -65,7 +65,7 @@ task :publish, [:revision] => [:is_repo_clean] do |t, args|
   puts "[->] pushing \e[33m#{current_git_tag}\e[0m to remote"
   system %{
     git push origin #{current_git_tag} &&
-    go list -m github.com:deliveryhero/spring-cloud-config-client-go@#{current_git_tag} &&
+    go list -m github.com/deliveryhero/spring-cloud-config-client-go@#{current_git_tag} &&
     echo "[->] [#{current_git_tag}] has been published" &&
     git push origin #{current_branch} &&
     echo "[->] code pushed to: [#{current_branch}] branch (updated)"
