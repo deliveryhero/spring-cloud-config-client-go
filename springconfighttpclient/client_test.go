@@ -9,18 +9,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/deliveryhero/spring-cloud-config-client-go/src/logging"
-	configserverclient "github.com/deliveryhero/spring-cloud-config-client-go/src/springconfighttpclient"
+	configserverclient "github.com/deliveryhero/spring-cloud-config-client-go/springconfighttpclient"
 	"github.com/stretchr/testify/suite"
 )
 
 type ClientTestSuite struct {
 	suite.Suite
-	logger logging.Logger
 }
 
 func (s *ClientTestSuite) SetupTest() {
-	s.logger = nil
 }
 
 func TestClient(t *testing.T) {

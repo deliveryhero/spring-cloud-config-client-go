@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	springconfighttpclient "github.com/deliveryhero/spring-cloud-config-client-go/src/springconfighttpclient"
-	resolver "github.com/deliveryhero/spring-cloud-config-client-go/src/springconfigresolver"
+	springconfighttpclient "github.com/deliveryhero/spring-cloud-config-client-go/springconfighttpclient"
+	resolver "github.com/deliveryhero/spring-cloud-config-client-go/springconfigresolver"
 )
 
 var _ RemoteConfigStorer = (*remoteConfigStorer)(nil) // compile

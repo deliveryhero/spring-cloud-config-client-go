@@ -4,11 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 
-	"github.com/deliveryhero/spring-cloud-config-client-go/src/logging"
 	"github.com/pkg/errors"
 )
 
@@ -20,9 +18,7 @@ type Client interface {
 }
 
 type client struct {
-	url string
-	log.Logger
-	logger   logging.Logger
+	url      string
 	client   *http.Client
 	username string
 	password string
@@ -79,21 +75,11 @@ func (c *client) Get(
 
 	url, err := url.Parse(c.url + "/" + application + "/" + environment)
 	if err != nil {
-		if c.logger != nil {
-			c.logger.ErrorContext(ctx, "[ConfigServerClient].[Get]",
-				"method", "ConfigServerClient.Get",
-				"url-parse-error", err)
-		}
 		return nil, errors.Wrap(err, "[ConfigServerClient].[Get] url parse error")
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url.String(), nil)
 	if err != nil {
-		if c.logger != nil {
-			c.logger.ErrorContext(ctx, "[ConfigServerClient].[Get]",
-				"method", "CheckoutAPI.Get",
-				"new-request-error", err)
-		}
 		return nil, errors.Wrap(err, "[ConfigServerClient].[Get] new request error")
 	}
 
@@ -104,11 +90,6 @@ func (c *client) Get(
 
 	res, err := c.client.Do(req)
 	if err != nil {
-		if c.logger != nil {
-			c.logger.ErrorContext(ctx, "[ConfigServerClient].[Get]",
-				"method", "ConfigServerClient.Get",
-				"get-error", err)
-		}
 		return nil, errors.Wrap(err, "[ConfigServerClient].[Get] get error")
 	}
 
@@ -118,11 +99,6 @@ func (c *client) Get(
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		if c.logger != nil {
-			c.logger.ErrorContext(ctx, "[ConfigServerClient].[Get]",
-				"method", "ConfigServerClient.Get",
-				"read-body-error", err)
-		}
 		return nil, errors.Wrap(err, "[ConfigServerClient].[Get] read body error")
 	}
 
@@ -136,13 +112,6 @@ func (c *client) Get(
 	}
 
 	resBodyString := string(resBody)
-	if c.logger != nil {
-		c.logger.ErrorContext(ctx, "[ConfigServerClient].[Get]",
-			"method", "ConfigServerClient.Get",
-			"status-code", res.StatusCode,
-			"status-message", res.Status,
-			"error-response", resBodyString)
-	}
 	return nil, errors.New(
 		"[ConfigServerClient].[Get] status:" + res.Status + " message: " + resBodyString,
 	)

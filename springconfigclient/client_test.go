@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/deliveryhero/spring-cloud-config-client-go/src/springconfigclient"
+	"github.com/deliveryhero/spring-cloud-config-client-go/springconfigclient"
 	"github.com/stretchr/testify/suite"
 )
 

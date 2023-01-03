@@ -104,7 +104,7 @@ task :test => [:has_gsed] do
     if [[ "${any_errors}" == "0" ]]; then
       echo "\n\n${color_white}Tests are passing...${color_off}"
       echo "${color_white}Calculating code coverage${color_off}"
-      go test ./... -coverpkg=./src/... -coverprofile ./coverage.out > /dev/null 2>&1
+      go test ./... -coverpkg=./... -coverprofile ./coverage.out > /dev/null 2>&1
       code_coverage_ratio=$(go tool cover -func ./coverage.out | grep "total:" | awk '{print $3}')
       echo "${color_white}Total test coverage: ${color_yellow}${code_coverage_ratio}${color_off}"
       code_coverage_ratio_md=${code_coverage_ratio/%/25}
@@ -122,7 +122,7 @@ task :update_test_coverage => [:has_gsed] do
     color_off=$'\e[0m'
 
     echo "${color_white}Calculating code coverage${color_off}"
-    go test ./... -coverpkg=./src/... -coverprofile ./coverage.out > /dev/null 2>&1
+    go test ./... -coverpkg=./... -coverprofile ./coverage.out > /dev/null 2>&1
     code_coverage_ratio=$(go tool cover -func ./coverage.out | grep "total:" | awk '{print $3}')
     echo "${color_white}Total test coverage: ${color_yellow}${code_coverage_ratio}${color_off}"
     code_coverage_ratio_md=${code_coverage_ratio/%/25}

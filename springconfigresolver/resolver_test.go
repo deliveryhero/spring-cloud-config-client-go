@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	resolver "github.com/deliveryhero/spring-cloud-config-client-go/src/springconfigresolver"
+	resolver "github.com/deliveryhero/spring-cloud-config-client-go/springconfigresolver"
 	"github.com/stretchr/testify/suite"
 )
 
