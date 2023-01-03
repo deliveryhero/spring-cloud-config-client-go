@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/deliveryhero/spring-cloud-config-client-go/src/logging"
 	springconfighttpclient "github.com/deliveryhero/spring-cloud-config-client-go/src/springconfighttpclient"
 	resolver "github.com/deliveryhero/spring-cloud-config-client-go/src/springconfigresolver"
 )
@@ -19,7 +18,6 @@ type RemoteConfig struct {
 
 type remoteConfigStorer struct {
 	values       map[string]string
-	logger       logging.Logger
 	remoteConfig *RemoteConfig
 	Service      string
 	Environment  string
@@ -30,12 +28,11 @@ type RemoteConfigStorer interface {
 	Sync() error
 }
 
-func New(service string, environment string, remoteConfig *RemoteConfig, logger logging.Logger) RemoteConfigStorer {
+func New(service string, environment string, remoteConfig *RemoteConfig) RemoteConfigStorer {
 	return &remoteConfigStorer{
 		Service:      service,
 		Environment:  environment,
 		remoteConfig: remoteConfig,
-		logger:       logger,
 	}
 }
 

@@ -7,18 +7,15 @@ import (
 	"os"
 	"testing"
 
-	"github.com/deliveryhero/spring-cloud-config-client-go/src/logging"
 	"github.com/deliveryhero/spring-cloud-config-client-go/src/springconfigclient"
 	"github.com/stretchr/testify/suite"
 )
 
 type ConfigStorerTestSuite struct {
 	suite.Suite
-	logger logging.Logger
 }
 
 func (s *ConfigStorerTestSuite) SetupTest() {
-	s.logger = nil
 }
 
 func TestConfigStorer(t *testing.T) {
@@ -52,7 +49,7 @@ func (s *ConfigStorerTestSuite) getStore(springConfig *springConfig) (*httptest.
 	remoteConfig := springconfigclient.RemoteConfig{
 		Url: testServer.URL,
 	}
-	return testServer, springconfigclient.New("", "", &remoteConfig, s.logger)
+	return testServer, springconfigclient.New("", "", &remoteConfig)
 }
 
 func (s *ConfigStorerTestSuite) TestResolve_Empty() {
