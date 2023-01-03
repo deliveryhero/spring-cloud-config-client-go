@@ -107,10 +107,10 @@ tag and updated code to remote and verify go package. (all in one!)
 All PR’s are welcome!
 
 1. `fork` (https://github.com/deliveryhero/spring-cloud-config-client-go/fork)
-1. Create your `branch` (`git checkout -b my-feature`)
-1. `commit` yours (`git commit -am 'add some functionality'`)
-1. `push` your `branch` (`git push origin my-feature`)
-1. Than create a new **Pull Request**!
+2. Create your `branch` (`git checkout -b my-feature`)
+3. `commit` yours (`git commit -am 'add some functionality'`)
+4. `push` your `branch` (`git push origin my-feature`)
+5. Than create a new **Pull Request**!
 
 This project is intended to be a safe, welcoming space for collaboration, and
 contributors are expected to adhere to the [code of conduct][coc].
