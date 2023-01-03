@@ -5,7 +5,34 @@
 ![Test Coverage](https://img.shields.io/badge/coverage-85.0%25-orange.svg)
 
 # spring-cloud-config-client-go
-Spring Cloud Config Client
+Spring Cloud Config Client is GO client for [Spring Cloud Config](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/). Supports [Property Overrides](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#property-overrides) feature.
+
+## Sample Usage
+
+```go
+package main
+
+import (
+	"fmt"
+
+	configclient "github.com/deliveryhero/spring-cloud-config-client-go/springconfigclient"
+)
+
+func main() {
+	c := configclient.RemoteConfig{
+		Url:      "https://remote-url.com",
+		Username: "username",
+		Password: "pass",
+	}
+	a := configclient.New("sample-api", "prod", &c)
+
+	if err := a.Sync(); err != nil {
+		fmt.Println("Error: ", err)
+	}
+
+	fmt.Println("ENV_KEY value is: ", a.GetEnv("ENV_KEY"))
+}
+```
 
 ## Installation
 
@@ -42,6 +69,7 @@ go get github.com/deliveryhero/spring-cloud-config-client-go
 ```
 
 ---
+
 
 ## Tests
 
