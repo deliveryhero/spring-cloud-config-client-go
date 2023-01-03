@@ -30,7 +30,7 @@ func (r *resolver) Resolve(str string) string {
 		defaultValue := ""
 		envValueName := v[0]
 		if len(v) > 1 {
-			defaultValue = v[1]
+			defaultValue = strings.Join(v[1:], ":")
 		}
 		envValue := os.Getenv(envValueName)
 

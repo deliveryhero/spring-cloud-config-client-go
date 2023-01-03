@@ -194,3 +194,33 @@ func (s *ConfigStorerTestSuite) TestResolve_NotDefined() {
 
 	s.Equal("local_test", value)
 }
+
+func (s *ConfigStorerTestSuite) TestResolve_EmptyLocalDefaultValueSpecialChars() {
+	springConfig := springConfig{
+		Name:     "app",
+		Profiles: []string{"Env"},
+		PropertySources: []springConfigpropertySource{
+			{
+				Name: "source-1",
+				Source: map[string]any{
+					"DUMMY6": "${LOCAL_DUMMY6:http://localhost:5000}",
+				},
+			},
+			{
+				Name: "source-2",
+				Source: map[string]any{
+					"DUMMY6": "123",
+				},
+			},
+		},
+	}
+
+	testServer, store := s.getStore(&springConfig)
+	defer func() { testServer.Close() }()
+
+	s.Nil(store.Sync())
+
+	value := store.GetEnv("DUMMY6")
+
+	s.Equal("http://localhost:5000", value)
+}
