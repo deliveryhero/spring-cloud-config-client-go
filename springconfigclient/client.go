@@ -30,6 +30,7 @@ type remoteConfigStorer struct {
 
 type RemoteConfigStorer interface {
 	LookupEnv(key string) (string, bool)
+	GetenvWithFallback(key string, fallback string) string
 	Getenv(key string) string
 	Sync() error
 }
@@ -94,6 +95,24 @@ func (c *remoteConfigStorer) Getenv(key string) string {
 	}
 
 	return os.Getenv(key)
+}
+
+func (c *remoteConfigStorer) GetenvWithFallback(key string, fallback string) string {
+	value, ok := c.values[key]
+	if ok {
+		if !value.ok {
+			return fallback
+		}
+
+		return value.value
+	}
+
+	envValue, envOk := os.LookupEnv(key)
+	if !envOk {
+		return fallback
+	}
+
+	return envValue
 }
 
 func (c *remoteConfigStorer) LookupEnv(key string) (string, bool) {

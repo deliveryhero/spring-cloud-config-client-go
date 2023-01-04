@@ -255,3 +255,33 @@ func (s *ConfigStorerTestSuite) TestLookupEnv_Empty() {
 	s.Equal(ok, false)
 	s.Equal("", value)
 }
+
+func (s *ConfigStorerTestSuite) TestGetenvWithFallback_Empty() {
+	springConfig := springConfig{
+		Name:     "app",
+		Profiles: []string{"Env"},
+		PropertySources: []springConfigpropertySource{
+			{
+				Name: "source-1",
+				Source: map[string]any{
+					"DUMMY1": "${LOCAL_DUMMY1}",
+				},
+			},
+			{
+				Name: "source-2",
+				Source: map[string]any{
+					"DUMMY1": "test",
+				},
+			},
+		},
+	}
+
+	testServer, store := s.getStore(&springConfig)
+	defer func() { testServer.Close() }()
+
+	s.Nil(store.Sync())
+
+	value := store.GetenvWithFallback("DUMMY1", "fallback")
+
+	s.Equal("fallback", value)
+}
