@@ -52,7 +52,7 @@ func (s *ConfigStorerTestSuite) getStore(springConfig *springConfig) (*httptest.
 	return testServer, springconfigclient.New("", "", &remoteConfig)
 }
 
-func (s *ConfigStorerTestSuite) TestResolve_Empty() {
+func (s *ConfigStorerTestSuite) TestGetenv_Empty() {
 	springConfig := springConfig{
 		Name:     "app",
 		Profiles: []string{"Env"},
@@ -77,12 +77,12 @@ func (s *ConfigStorerTestSuite) TestResolve_Empty() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetEnv("DUMMY1")
+	value := store.Getenv("DUMMY1")
 
 	s.Equal("", value)
 }
 
-func (s *ConfigStorerTestSuite) TestResolve_EmptyLocalDefaultValue() {
+func (s *ConfigStorerTestSuite) TestGetenv_EmptyLocalDefaultValue() {
 	springConfig := springConfig{
 		Name:     "app",
 		Profiles: []string{"Env"},
@@ -107,12 +107,12 @@ func (s *ConfigStorerTestSuite) TestResolve_EmptyLocalDefaultValue() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetEnv("DUMMY2")
+	value := store.Getenv("DUMMY2")
 
 	s.Equal("test", value)
 }
 
-func (s *ConfigStorerTestSuite) TestResolve_LocalValue() {
+func (s *ConfigStorerTestSuite) TestGetenv_LocalValue() {
 	os.Setenv("LOCAL_DUMMY3", "local_test")
 	springConfig := springConfig{
 		Name:     "app",
@@ -138,14 +138,14 @@ func (s *ConfigStorerTestSuite) TestResolve_LocalValue() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetEnv("DUMMY3")
+	value := store.Getenv("DUMMY3")
 
 	os.Unsetenv("LOCAL_DUMMY3")
 
 	s.Equal("local_test", value)
 }
 
-func (s *ConfigStorerTestSuite) TestResolve_Fixed() {
+func (s *ConfigStorerTestSuite) TestGetenv_Fixed() {
 	springConfig := springConfig{
 		Name:     "app",
 		Profiles: []string{"Env"},
@@ -170,12 +170,12 @@ func (s *ConfigStorerTestSuite) TestResolve_Fixed() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetEnv("DUMMY4")
+	value := store.Getenv("DUMMY4")
 
 	s.Equal("1", value)
 }
 
-func (s *ConfigStorerTestSuite) TestResolve_NotDefined() {
+func (s *ConfigStorerTestSuite) TestGetenv_NotDefined() {
 	os.Setenv("DUMMY5", "local_test")
 	springConfig := springConfig{
 		Name:            "app",
@@ -188,14 +188,14 @@ func (s *ConfigStorerTestSuite) TestResolve_NotDefined() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetEnv("DUMMY5")
+	value := store.Getenv("DUMMY5")
 
 	os.Unsetenv("DUMMY5")
 
 	s.Equal("local_test", value)
 }
 
-func (s *ConfigStorerTestSuite) TestResolve_EmptyLocalDefaultValueSpecialChars() {
+func (s *ConfigStorerTestSuite) TestGetenv_EmptyLocalDefaultValueSpecialChars() {
 	springConfig := springConfig{
 		Name:     "app",
 		Profiles: []string{"Env"},
@@ -220,7 +220,38 @@ func (s *ConfigStorerTestSuite) TestResolve_EmptyLocalDefaultValueSpecialChars()
 
 	s.Nil(store.Sync())
 
-	value := store.GetEnv("DUMMY6")
+	value := store.Getenv("DUMMY6")
 
 	s.Equal("http://localhost:5000", value)
+}
+
+func (s *ConfigStorerTestSuite) TestLookupEnv_Empty() {
+	springConfig := springConfig{
+		Name:     "app",
+		Profiles: []string{"Env"},
+		PropertySources: []springConfigpropertySource{
+			{
+				Name: "source-1",
+				Source: map[string]any{
+					"DUMMY1": "${LOCAL_DUMMY1}",
+				},
+			},
+			{
+				Name: "source-2",
+				Source: map[string]any{
+					"DUMMY1": "test",
+				},
+			},
+		},
+	}
+
+	testServer, store := s.getStore(&springConfig)
+	defer func() { testServer.Close() }()
+
+	s.Nil(store.Sync())
+
+	value, ok := store.LookupEnv("DUMMY1")
+
+	s.Equal(ok, false)
+	s.Equal("", value)
 }

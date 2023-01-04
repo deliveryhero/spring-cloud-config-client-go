@@ -18,15 +18,19 @@ type RemoteConfig struct {
 }
 
 type remoteConfigStorer struct {
-	mu           sync.Mutex
-	values       map[string]string
+	mu     sync.Mutex
+	values map[string]struct {
+		value string
+		ok    bool
+	}
 	remoteConfig *RemoteConfig
 	Service      string
 	Environment  string
 }
 
 type RemoteConfigStorer interface {
-	GetEnv(key string) string
+	LookupEnv(key string) (string, bool)
+	Getenv(key string) string
 	Sync() error
 }
 
@@ -52,7 +56,10 @@ func (c *remoteConfigStorer) Sync() error {
 	}
 
 	resolver := resolver.New()
-	values := map[string]string{}
+	values := map[string]struct {
+		value string
+		ok    bool
+	}{}
 
 	for _, e := range config["propertySources"].([]interface{}) {
 		propertySource := e.(map[string]any)
@@ -64,10 +71,13 @@ func (c *remoteConfigStorer) Sync() error {
 				continue
 			}
 
-			resolverValue := resolver.Resolve(stringValue)
+			resolverValue, resolverOk := resolver.Resolve(stringValue)
 
 			if _, ok := values[key]; !ok {
-				values[key] = resolverValue
+				values[key] = struct {
+					value string
+					ok    bool
+				}{resolverValue, resolverOk}
 			}
 		}
 	}
@@ -77,11 +87,20 @@ func (c *remoteConfigStorer) Sync() error {
 	return nil
 }
 
-func (c *remoteConfigStorer) GetEnv(key string) string {
+func (c *remoteConfigStorer) Getenv(key string) string {
 	value, ok := c.values[key]
 	if ok {
-		return value
+		return value.value
 	}
 
 	return os.Getenv(key)
+}
+
+func (c *remoteConfigStorer) LookupEnv(key string) (string, bool) {
+	value, ok := c.values[key]
+	if ok {
+		return value.value, value.ok
+	}
+
+	return os.LookupEnv(key)
 }
