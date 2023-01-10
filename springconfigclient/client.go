@@ -2,11 +2,21 @@ package springconfigclient
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"os"
 	"sync"
 
 	springconfighttpclient "github.com/deliveryhero/spring-cloud-config-client-go/springconfighttpclient"
 	resolver "github.com/deliveryhero/spring-cloud-config-client-go/springconfigresolver"
+)
+
+var (
+	// ErrInvalidData invalid response from config server.
+	ErrInvalidData = errors.New("invalid config server payload")
+
+	// ErrNotFound config not found.
+	ErrNotFound = errors.New("config not found")
 )
 
 var _ RemoteConfigStorer = (*remoteConfigStorer)(nil) // compile
@@ -53,6 +63,14 @@ func (c *remoteConfigStorer) Sync() error {
 	config, err := client.Get(context.Background(), c.Service, c.Environment)
 
 	if err != nil {
+		errResponse := springconfighttpclient.ErrorResponse{}
+		if errors.As(err, &errResponse) {
+			if errResponse.StatusCode == http.StatusNotFound {
+				return ErrNotFound
+			}
+
+			return errResponse
+		}
 		return err
 	}
 
@@ -62,7 +80,12 @@ func (c *remoteConfigStorer) Sync() error {
 		ok    bool
 	}{}
 
-	for _, e := range config["propertySources"].([]interface{}) {
+	propertySources, propertySourcesOk := config["propertySources"]
+	if !propertySourcesOk {
+		return ErrInvalidData
+	}
+
+	for _, e := range propertySources.([]interface{}) {
 		propertySource := e.(map[string]any)
 		sources := propertySource["source"].(map[string]interface{})
 

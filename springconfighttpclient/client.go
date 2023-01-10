@@ -24,6 +24,11 @@ type client struct {
 	password string
 }
 
+type ErrorResponse struct {
+	error
+	StatusCode int
+}
+
 // New creates a new client for Checkout API.
 // defaultRetryWaitMin = 1 * time.Second.
 // defaultRetryWaitMax = 30 * time.Second.
@@ -112,7 +117,9 @@ func (c *client) Get(
 	}
 
 	resBodyString := string(resBody)
-	return nil, errors.New(
-		"[ConfigServerClient].[Get] status:" + res.Status + " message: " + resBodyString,
-	)
+	return nil, ErrorResponse{
+		error: errors.New(
+			"[ConfigServerClient].[Get] status:" + res.Status + " message: " + resBodyString),
+		StatusCode: res.StatusCode,
+	}
 }

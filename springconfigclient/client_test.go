@@ -285,3 +285,71 @@ func (s *ConfigStorerTestSuite) TestGetenvWithFallback_Empty() {
 
 	s.Equal("fallback", value)
 }
+
+func (s *ConfigStorerTestSuite) TestSync_Error() {
+	testServer := httptest.NewServer(
+		http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			res.WriteHeader(http.StatusOK)
+			bytes, err := json.Marshal(map[string]interface{}{
+				"key": "value",
+			})
+
+			if err != nil {
+				s.Error(err)
+			}
+			if _, err := res.Write(bytes); err != nil {
+				s.Error(err)
+			}
+		}))
+
+	remoteConfig := springconfigclient.RemoteConfig{
+		Url: testServer.URL,
+	}
+
+	store := springconfigclient.New("", "", &remoteConfig)
+
+	defer func() { testServer.Close() }()
+
+	err := store.Sync()
+
+	s.ErrorIs(err, springconfigclient.ErrInvalidData)
+}
+
+func (s *ConfigStorerTestSuite) TestSync_NotFound() {
+	testServer := httptest.NewServer(
+		http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			res.WriteHeader(http.StatusNotFound)
+		}))
+
+	remoteConfig := springconfigclient.RemoteConfig{
+		Url: testServer.URL,
+	}
+
+	store := springconfigclient.New("", "", &remoteConfig)
+
+	defer func() { testServer.Close() }()
+
+	err := store.Sync()
+
+	s.ErrorIs(err, springconfigclient.ErrNotFound)
+}
+
+func (s *ConfigStorerTestSuite) TestSync_ServerError() {
+	testServer := httptest.NewServer(
+		http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			res.WriteHeader(http.StatusInternalServerError)
+		}))
+
+	remoteConfig := springconfigclient.RemoteConfig{
+		Url: testServer.URL,
+	}
+
+	store := springconfigclient.New("", "", &remoteConfig)
+
+	defer func() { testServer.Close() }()
+
+	err := store.Sync()
+
+	s.NotNil(err)
+	s.ErrorContains(err, "500")
+}
