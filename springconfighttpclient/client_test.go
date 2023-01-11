@@ -29,12 +29,13 @@ func (s *ClientTestSuite) TestClient_Success() {
 	password := "password"
 	service := "service"
 	environment := "environment"
+	label := "0.0.1"
 
 	testServer := httptest.NewServer(
 		http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 			auth := req.Header.Get("Authorization")
 			if strings.HasPrefix(auth, "Basic ") {
-				if req.RequestURI != "/"+service+"/"+environment {
+				if req.RequestURI != "/"+service+"/"+environment+"/"+label {
 					s.T().Error(fmt.Errorf("Invalid Request URI. Got %q, wanted %q", req.RequestURI, "/"+service+"/"+environment))
 				}
 				encoded := auth[6:]
@@ -64,7 +65,7 @@ func (s *ClientTestSuite) TestClient_Success() {
 		configserverclient.WithURL(testServer.URL),
 		configserverclient.WithUsername(username),
 		configserverclient.WithPassword(password))
-	_, err := client.Get(context.Background(), service, environment)
+	_, err := client.Get(context.Background(), service, environment, label)
 
 	s.Nil(err)
 }

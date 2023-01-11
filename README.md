@@ -24,7 +24,7 @@ func main() {
 		Username: "username",
 		Password: "pass",
 	}
-	a := configclient.New("sample-api", "prod", &c)
+	a := configclient.New("sample-api", "prod", "0.0.1", &c)
 
 	if err := a.Sync(); err != nil {
 		fmt.Println("Error: ", err)

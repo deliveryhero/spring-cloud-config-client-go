@@ -14,7 +14,7 @@ var _ Client = (*client)(nil) // compile time proof
 
 // Client defines api actions for Checkout API.
 type Client interface {
-	Get(context.Context, string, string) (map[string]any, error)
+	Get(context.Context, string, string, string) (map[string]any, error)
 }
 
 type client struct {
@@ -73,12 +73,13 @@ func (c *client) Get(
 	ctx context.Context,
 	application string,
 	environment string,
+	label string,
 ) (map[string]any, error) {
 	if c.client == nil {
 		c.client = http.DefaultClient
 	}
 
-	url, err := url.Parse(c.url + "/" + application + "/" + environment)
+	url, err := url.Parse(c.url + "/" + application + "/" + environment + "/" + label)
 	if err != nil {
 		return nil, errors.Wrap(err, "[ConfigServerClient].[Get] url parse error")
 	}

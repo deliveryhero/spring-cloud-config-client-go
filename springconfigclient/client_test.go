@@ -49,7 +49,7 @@ func (s *ConfigStorerTestSuite) getStore(springConfig *springConfig) (*httptest.
 	remoteConfig := springconfigclient.RemoteConfig{
 		Url: testServer.URL,
 	}
-	return testServer, springconfigclient.New("", "", &remoteConfig)
+	return testServer, springconfigclient.New("", "", "", &remoteConfig)
 }
 
 func (s *ConfigStorerTestSuite) TestGetenv_Empty() {
@@ -306,7 +306,7 @@ func (s *ConfigStorerTestSuite) TestSync_Error() {
 		Url: testServer.URL,
 	}
 
-	store := springconfigclient.New("", "", &remoteConfig)
+	store := springconfigclient.New("", "", "", &remoteConfig)
 
 	defer func() { testServer.Close() }()
 
@@ -325,7 +325,7 @@ func (s *ConfigStorerTestSuite) TestSync_NotFound() {
 		Url: testServer.URL,
 	}
 
-	store := springconfigclient.New("", "", &remoteConfig)
+	store := springconfigclient.New("", "", "", &remoteConfig)
 
 	defer func() { testServer.Close() }()
 
@@ -344,7 +344,7 @@ func (s *ConfigStorerTestSuite) TestSync_ServerError() {
 		Url: testServer.URL,
 	}
 
-	store := springconfigclient.New("", "", &remoteConfig)
+	store := springconfigclient.New("", "", "", &remoteConfig)
 
 	defer func() { testServer.Close() }()
 

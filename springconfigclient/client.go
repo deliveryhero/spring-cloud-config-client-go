@@ -36,6 +36,7 @@ type remoteConfigStorer struct {
 	remoteConfig *RemoteConfig
 	Service      string
 	Environment  string
+	Label        string
 }
 
 type RemoteConfigStorer interface {
@@ -45,10 +46,11 @@ type RemoteConfigStorer interface {
 	Sync() error
 }
 
-func New(service string, environment string, remoteConfig *RemoteConfig) RemoteConfigStorer {
+func New(service string, environment string, label string, remoteConfig *RemoteConfig) RemoteConfigStorer {
 	return &remoteConfigStorer{
 		Service:      service,
 		Environment:  environment,
+		Label:        label,
 		remoteConfig: remoteConfig,
 	}
 }
@@ -60,7 +62,7 @@ func (c *remoteConfigStorer) Sync() error {
 		springconfighttpclient.WithURL(c.remoteConfig.Url),
 		springconfighttpclient.WithUsername(c.remoteConfig.Username),
 		springconfighttpclient.WithPassword(c.remoteConfig.Password))
-	config, err := client.Get(context.Background(), c.Service, c.Environment)
+	config, err := client.Get(context.Background(), c.Service, c.Environment, c.Label)
 
 	if err != nil {
 		errResponse := springconfighttpclient.ErrorResponse{}
