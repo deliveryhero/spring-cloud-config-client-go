@@ -3,6 +3,7 @@ package springconfigclient
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"sync"
@@ -92,10 +93,8 @@ func (c *remoteConfigStorer) Sync() error {
 		sources := propertySource["source"].(map[string]interface{})
 
 		for key, value := range sources {
-			stringValue, ok := value.(string)
-			if !ok {
-				continue
-			}
+
+			stringValue := fmt.Sprintf("%v", value)
 
 			resolverValue, resolverOk := resolver.Resolve(stringValue)
 
