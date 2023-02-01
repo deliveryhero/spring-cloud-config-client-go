@@ -332,7 +332,7 @@ func (s *ConfigStorerTestSuite) TestGetenvWithFallbackInt_NotEmpty() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetenvWithFallback("DUMMY1", "fallback")
+	value := store.GetenvWithFallback("DUMMY1", "5")
 
 	s.Equal(fmt.Sprintf("%v", testValue), value)
 }
@@ -357,7 +357,7 @@ func (s *ConfigStorerTestSuite) TestGetenvWithFallbackBool_NotEmpty() {
 
 	s.Nil(store.Sync())
 
-	value := store.GetenvWithFallback("DUMMY1", "fallback")
+	value := store.GetenvWithFallback("DUMMY1", "false")
 
 	s.Equal(fmt.Sprintf("%v", testValue), value)
 }
