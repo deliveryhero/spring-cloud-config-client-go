@@ -2,6 +2,7 @@ package springconfigclient_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -284,6 +285,81 @@ func (s *ConfigStorerTestSuite) TestGetenvWithFallback_Empty() {
 	value := store.GetenvWithFallback("DUMMY1", "fallback")
 
 	s.Equal("fallback", value)
+}
+
+func (s *ConfigStorerTestSuite) TestGetenvWithFallback_NotEmpty() {
+	testValue := "test"
+	springConfig := springConfig{
+		Name:     "app",
+		Profiles: []string{"Env"},
+		PropertySources: []springConfigpropertySource{
+			{
+				Name: "source-2",
+				Source: map[string]any{
+					"DUMMY1": testValue,
+				},
+			},
+		},
+	}
+
+	testServer, store := s.getStore(&springConfig)
+	defer func() { testServer.Close() }()
+
+	s.Nil(store.Sync())
+
+	value := store.GetenvWithFallback("DUMMY1", "fallback")
+
+	s.Equal(testValue, value)
+}
+
+func (s *ConfigStorerTestSuite) TestGetenvWithFallbackInt_NotEmpty() {
+	testValue := 1
+	springConfig := springConfig{
+		Name:     "app",
+		Profiles: []string{"Env"},
+		PropertySources: []springConfigpropertySource{
+			{
+				Name: "source-2",
+				Source: map[string]any{
+					"DUMMY1": testValue,
+				},
+			},
+		},
+	}
+
+	testServer, store := s.getStore(&springConfig)
+	defer func() { testServer.Close() }()
+
+	s.Nil(store.Sync())
+
+	value := store.GetenvWithFallback("DUMMY1", "fallback")
+
+	s.Equal(fmt.Sprintf("%v", testValue), value)
+}
+
+func (s *ConfigStorerTestSuite) TestGetenvWithFallbackBool_NotEmpty() {
+	testValue := true
+	springConfig := springConfig{
+		Name:     "app",
+		Profiles: []string{"Env"},
+		PropertySources: []springConfigpropertySource{
+			{
+				Name: "source-2",
+				Source: map[string]any{
+					"DUMMY1": testValue,
+				},
+			},
+		},
+	}
+
+	testServer, store := s.getStore(&springConfig)
+	defer func() { testServer.Close() }()
+
+	s.Nil(store.Sync())
+
+	value := store.GetenvWithFallback("DUMMY1", "fallback")
+
+	s.Equal(fmt.Sprintf("%v", testValue), value)
 }
 
 func (s *ConfigStorerTestSuite) TestSync_Error() {
